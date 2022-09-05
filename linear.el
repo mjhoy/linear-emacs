@@ -44,6 +44,7 @@
 (defun linear-retrieve ()
   "Retrieve from the Linear graphql endpoint."
   (let* ((api-key (linear--get-api-key))
+         (linear-buffer (linear--get-or-create-buf))
          (handler
           (lambda (_)
             (let ((status-code (url-http-symbol-value-in-buffer 'url-http-response-status (current-buffer))))
@@ -54,7 +55,8 @@
                           (json-key-type 'symbol)
                           (json-array-type 'vector))
                       (let ((result (json-read)))
-                        (message "Got json: %s" result)))
+                        (linear--populate-buffer result)
+                        ))
                     )
                 (message "Bad status code: %s" status-code))
               )))
@@ -63,8 +65,61 @@
                                       ("Content-Type" . "application/json")))
          (url-request-data "{\"query\": \"{ issues { nodes { id title } } }\" }")
          )
-    (url-retrieve "https://api.linear.app/graphql" handler '() t))
+    (with-current-buffer linear-buffer
+      (setq buffer-read-only nil)
+      (erase-buffer)
+      (insert "😽 Loading")
+      (setq buffer-read-only t)
+      )
+    (linear--switch-to-buf)
+    (url-retrieve "https://api.linear.app/graphql" handler '() t)
+    )
   )
+
+;; Debugging
+(defvar linear--last-response)
+
+(defun linear--resp-get-nodes (response)
+  "Takes a Linear RESPONSE and return a list of nodes."
+  (let* ((data (cdr response))
+         (issues (cdr (assq 'issues data)))
+         (nodes (car (cdr (assq 'nodes issues)))))
+    nodes))
+
+(defun linear--populate-buffer (response)
+  "Takes a Linear RESPONSE and writes to the buffer."
+  (setq linear--last-response response)
+  (with-current-buffer (linear--get-or-create-buf)
+    (setq buffer-read-only nil)
+    (erase-buffer)
+    (seq-do (lambda (item)
+              (let* ((title (plist-get item 'title)))
+                (insert (format "* %s" (decode-coding-string title 'utf-8)))
+                (newline)))
+            (linear--resp-get-nodes response))
+    (setq buffer-read-only t)
+    ))
+
+(defun linear--get-or-create-buf ()
+  "Get the linear buffer if it exists, or create it."
+  (let ((buffer (or
+                 (get-buffer "*linear*")
+                 (progn
+                   (let ((buffer (generate-new-buffer "*linear*")))
+                     (set-buffer-major-mode buffer)
+                     (with-current-buffer buffer
+                       (read-only-mode t)
+                       )
+                     buffer)))))
+    buffer))
+
+(defun linear--switch-to-buf ()
+  "Switch to the linear buffer."
+  (let* ((buffer (linear--get-or-create-buf))
+         (window (display-buffer buffer '(display-buffer-at-bottom . nil))))
+    (select-window window)
+    (view-mode t)
+    ))
 
 (provide 'linear)
 ;;; linear.el ends here
