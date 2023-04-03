@@ -60,6 +60,26 @@ in your `auth-sources' file."
 (when (and linear-api-use-auth-source (not linear-api-token))
   (setq linear-api-token (linear--get-api-key-from-auth-source)))
 
+(defvar linear-mode-map nil
+  "Keymap for Linear major mode.")
+(unless linear-mode-map
+  (setq linear-mode-map (make-sparse-keymap))
+  (define-key linear-mode-map (kbd "g") 'linear-refresh)
+  (define-key linear-mode-map (kbd "RET") 'linear-open-item)
+  )
+(fset 'linear-mode-map linear-mode-map)
+
+(define-derived-mode linear-mode special-mode
+  "linear"
+  "Major mode for displaying Linear tickets."
+  (use-local-map linear-mode-map)
+  )
+
+(defun linear-refresh ()
+  "Refresh the Linear buffer."
+  (interactive)
+  (linear-retrieve))
+
 (defun linear-retrieve ()
   "Retrieve from the Linear graphql endpoint."
   (let* ((linear-buffer (linear--get-or-create-buf))
@@ -91,7 +111,7 @@ in your `auth-sources' file."
          (url-request-method "POST")
          (url-request-extra-headers `(("Authorization" . ,linear-api-token)
                                       ("Content-Type" . "application/json")))
-         (url-request-data "{\"query\": \"{ viewer { assignedIssues(filter: { completedAt: { null: true } }) { nodes { id title state { name color } } } } }\" }")
+         (url-request-data "{\"query\": \"{ viewer { assignedIssues(filter: { completedAt: { null: true } }) { nodes { id identifier url title state { name color } } } } }\" }")
          )
     (with-current-buffer linear-buffer
       (setq buffer-read-only nil)
@@ -127,14 +147,29 @@ in your `auth-sources' file."
     (erase-buffer)
     (seq-do (lambda (item)
               (let* ((title (plist-get item 'title))
+                     (identifier (plist-get item 'identifier))
                      (state (plist-get item 'state))
                      (state-name (plist-get state 'name))
+                     (orig-position (point))
                      )
-                (insert (format "* [%s] %s" (decode-coding-string state-name 'utf-8) (decode-coding-string title 'utf-8)))
+                (insert (format "* [%s] (%s) %s" (decode-coding-string identifier 'utf-8) (decode-coding-string state-name 'utf-8) (decode-coding-string title 'utf-8)))
+                (put-text-property orig-position (point) 'linear-item item)
                 (newline)))
             (linear--resp-get-nodes response))
     (setq buffer-read-only t)
     ))
+
+(defun linear-open-item ()
+  "Open the item at point."
+  (interactive)
+  (let* ((item (linear--get-item-at-point))
+         (url (plist-get item 'url)))
+    (browse-url url)
+    ))
+
+(defun linear--get-item-at-point ()
+  "Get the Linear item at point."
+  (get-text-property (point) 'linear-item))
 
 (defun linear--populate-buffer-err (response)
   "Takes a Linear error RESPONSE and writes to the buffer."
@@ -150,16 +185,14 @@ in your `auth-sources' file."
     (setq buffer-read-only t)
     ))
 
-
 (defun linear--get-or-create-buf ()
   "Get the linear buffer if it exists, or create it."
   (let ((buffer (or
                  (get-buffer "*linear*")
                  (progn
                    (let ((buffer (generate-new-buffer "*linear*")))
-                     (set-buffer-major-mode buffer)
                      (with-current-buffer buffer
-                       (read-only-mode t)
+                       (linear-mode)
                        )
                      buffer)))))
     buffer))
@@ -169,7 +202,6 @@ in your `auth-sources' file."
   (let* ((buffer (linear--get-or-create-buf))
          (window (display-buffer buffer '(display-buffer-at-bottom . nil))))
     (select-window window)
-    (view-mode t)
     ))
 
 (defun linear ()
