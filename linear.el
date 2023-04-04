@@ -152,7 +152,7 @@ in your `auth-sources' file."
   "Open the item at point."
   (interactive)
   (let* ((item (linear--get-item-at-point))
-         (url (plist-get item 'url)))
+         (url (plist-get item :url)))
     (browse-url url)
     ))
 
