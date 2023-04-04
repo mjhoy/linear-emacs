@@ -66,6 +66,7 @@ in your `auth-sources' file."
   (setq linear-mode-map (make-sparse-keymap))
   (define-key linear-mode-map (kbd "g") 'linear-refresh)
   (define-key linear-mode-map (kbd "RET") 'linear-open-item)
+  (define-key linear-mode-map (kbd "C-w") 'linear-kill-region)
   )
 (fset 'linear-mode-map linear-mode-map)
 
@@ -147,6 +148,17 @@ in your `auth-sources' file."
             (linear--resp-get-nodes response))
     (setq buffer-read-only t)
     ))
+
+(defun linear-kill-region ()
+  "If point is on a linear item, copy the URL."
+  (interactive)
+  (let ((item (linear--get-item-at-point)))
+    (if item
+        (progn
+          (let ((url (plist-get item :url)))
+            (kill-new url)
+            (message "%s" url)))
+      (kill-region (region-beginning) (region-end)))))
 
 (defun linear-open-item ()
   "Open the item at point."
