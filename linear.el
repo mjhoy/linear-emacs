@@ -76,6 +76,18 @@ in your `auth-sources' file."
   (use-local-map linear-mode-map)
   )
 
+(defun linear--get-or-create-buf ()
+  "Get the linear buffer if it exists, or create it."
+  (let ((buffer (or
+                 (get-buffer "*linear*")
+                 (progn
+                   (let ((buffer (generate-new-buffer "*linear*")))
+                     (with-current-buffer buffer
+                       (linear-mode)
+                       )
+                     buffer)))))
+    buffer))
+
 (defun linear-refresh ()
   "Refresh the Linear buffer."
   (interactive)
@@ -185,18 +197,6 @@ in your `auth-sources' file."
             (linear--resp-get-errs response))
     (setq buffer-read-only t)
     ))
-
-(defun linear--get-or-create-buf ()
-  "Get the linear buffer if it exists, or create it."
-  (let ((buffer (or
-                 (get-buffer "*linear*")
-                 (progn
-                   (let ((buffer (generate-new-buffer "*linear*")))
-                     (with-current-buffer buffer
-                       (linear-mode)
-                       )
-                     buffer)))))
-    buffer))
 
 (defun linear--switch-to-buf ()
   "Switch to the linear buffer."
