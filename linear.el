@@ -42,7 +42,7 @@
   :group 'linear)
 
 (defcustom linear-api-use-auth-source t
-  "If non-nil, use auth-source to retrieve linear-api-token key.
+  "If non-nil, use auth-source to retrieve `linear-api-token' key.
 
 The secret should be stored in the format
 
