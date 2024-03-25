@@ -99,7 +99,7 @@ in your `auth-sources' file."
          (url-request-method "POST")
          (url-request-extra-headers `(("Authorization" . ,linear-api-token)
                                       ("Content-Type" . "application/json")))
-         (url-request-data "{\"query\": \"{ viewer { assignedIssues(filter: { completedAt: { null: true } }) { nodes { id identifier url title state { name color } } } } }\" }")
+         (url-request-data "{\"query\": \"{ viewer { assignedIssues(filter: { completedAt: { null: true }, canceledAt: { null: true } }) { nodes { id identifier url title state { name color } } } } }\" }")
          (handler
           (lambda (_)
             (let ((status-code (url-http-symbol-value-in-buffer 'url-http-response-status (current-buffer))))
