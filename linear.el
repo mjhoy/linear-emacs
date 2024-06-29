@@ -33,6 +33,27 @@
 (require 'url-http)
 (require 'auth-source)
 
+(declare-function org-link-set-parameters "org")
+(declare-function org-link-store-props "org")
+
+(defun org-linear-store-link ()
+  "Store the link to the linear issue at point."
+  (when (equal major-mode 'linear-mode)
+    (let* ((item (linear--get-item-at-point))
+          (url (plist-get item :url))
+          (title (plist-get item :title))
+          (identifier (plist-get item :identifier)))
+
+      (org-link-store-props
+       :type "linear"
+       :link url
+       :description (format "[%s] %s" (decode-coding-string identifier 'utf-8) (decode-coding-string title 'utf-8)))
+      )))
+
+(with-eval-after-load 'org
+  (org-link-set-parameters
+   "linear" :store 'org-linear-store-link))
+
 ;; Silences warning about free variable.
 (defvar url-http-end-of-headers)
 
