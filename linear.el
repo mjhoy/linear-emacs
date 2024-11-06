@@ -91,6 +91,7 @@ in your `auth-sources' file."
   )
 (fset 'linear-mode-map linear-mode-map)
 
+;;;###autoload
 (define-derived-mode linear-mode special-mode
   "linear"
   "Major mode for displaying Linear tickets."
@@ -226,6 +227,7 @@ in your `auth-sources' file."
     (select-window window)
     ))
 
+;;;###autoload
 (defun linear ()
   "Open the Linear UI."
   (interactive)
