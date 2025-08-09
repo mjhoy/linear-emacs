@@ -32,6 +32,7 @@
 (require 'url)
 (require 'url-http)
 (require 'auth-source)
+(require 'linear-issue)
 
 (declare-function org-link-set-parameters "org")
 (declare-function org-link-store-props "org")
@@ -86,7 +87,8 @@ in your `auth-sources' file."
 (unless linear-mode-map
   (setq linear-mode-map (make-sparse-keymap))
   (define-key linear-mode-map (kbd "g") 'linear-refresh)
-  (define-key linear-mode-map (kbd "RET") 'linear-open-item)
+  (define-key linear-mode-map (kbd "RET") 'linear-show-item-details)
+  (define-key linear-mode-map (kbd "o") 'linear-open-item)
   (define-key linear-mode-map (kbd "C-w") 'linear-kill-region)
   (define-key linear-mode-map (kbd "p") 'previous-line)
   (define-key linear-mode-map (kbd "n") 'next-line)
@@ -197,7 +199,7 @@ in your `auth-sources' file."
       (kill-region (region-beginning) (region-end)))))
 
 (defun linear-open-item ()
-  "Open the item at point."
+  "Open the item at point in browser."
   (interactive)
   (let* ((item (linear--get-item-at-point))
          (url (plist-get item :url)))
