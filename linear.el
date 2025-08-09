@@ -88,6 +88,8 @@ in your `auth-sources' file."
   (define-key linear-mode-map (kbd "g") 'linear-refresh)
   (define-key linear-mode-map (kbd "RET") 'linear-open-item)
   (define-key linear-mode-map (kbd "C-w") 'linear-kill-region)
+  (define-key linear-mode-map (kbd "p") 'previous-line)
+  (define-key linear-mode-map (kbd "n") 'next-line)
   )
 (fset 'linear-mode-map linear-mode-map)
 
