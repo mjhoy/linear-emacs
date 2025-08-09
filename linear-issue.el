@@ -1,6 +1,6 @@
 ;;; linear-issue.el --- Linear issue UI    -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2022 Mikey Hoy
+;; Copyright (C) 2025 Mikey Hoy
 
 ;; Author: Mikey Hoy <mjh@mjhoy.com>
 ;; Keywords: linear
