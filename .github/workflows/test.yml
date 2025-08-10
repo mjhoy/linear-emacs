@@ -34,6 +34,7 @@ jobs:
       run: |
         emacs -batch \
           --eval "(add-to-list 'load-path \".\")" \
+          --eval "(setq linear-api-token \"test-token\")" \
           --eval "(require 'linear)" \
           --eval "(require 'linear-issue)" \
           --load "test/linear-test.el" \

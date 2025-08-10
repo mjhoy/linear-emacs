@@ -27,6 +27,7 @@
 
 (require 'url)
 (require 'url-http)
+(require 'parse-time)
 
 ;; Silences warning about free variable.
 (defvar url-http-end-of-headers)
