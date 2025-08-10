@@ -1,0 +1,25 @@
+{
+  "data": {
+    "issue": {
+      "id": "f923e500-0bab-4fa1-b5f2-f1144485feeb",
+      "identifier": "CHO-25",
+      "title": "Work on some improvements for linear-emacs",
+      "url": "https://linear.app/chorebot/issue/CHO-25/work-on-some-improvements-for-linear-emacs",
+      "description": null,
+      "state": {
+        "name": "In Progress",
+        "color": "#f2c94c"
+      },
+      "assignee": {
+        "name": "mjh@mjhoy.com",
+        "email": "mjh@mjhoy.com"
+      },
+      "labels": {
+        "nodes": []
+      },
+      "comments": {
+        "nodes": []
+      }
+    }
+  }
+}

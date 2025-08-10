@@ -1,0 +1,25 @@
+{
+  "data": {
+    "issue": {
+      "id": "adf20c5e-5a52-4906-8706-fdf825c7f891",
+      "identifier": "CHO-18",
+      "title": "Allow reseting the timer",
+      "url": "https://linear.app/chorebot/issue/CHO-18/allow-reseting-the-timer",
+      "description": "A test description.",
+      "state": {
+        "name": "Todo 🫡",
+        "color": "#e2e2e2"
+      },
+      "assignee": {
+        "name": "mjh@mjhoy.com",
+        "email": "mjh@mjhoy.com"
+      },
+      "labels": {
+        "nodes": []
+      },
+      "comments": {
+        "nodes": []
+      }
+    }
+  }
+}

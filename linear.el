@@ -74,6 +74,11 @@ in your `auth-sources' file."
   :type 'boolean
   :group 'linear)
 
+(defcustom linear-api-endpoint "https://api.linear.app/graphql"
+  "Linear GraphQL API endpoint URL."
+  :type 'string
+  :group 'linear)
+
 (defun linear--get-api-key-from-auth-source ()
   "Retrieve linear API key from auth-source."
   (let ((auth (nth 0 (auth-source-search :host "api.linear.app" :requires '(secret)))))
@@ -149,7 +154,7 @@ in your `auth-sources' file."
       (setq buffer-read-only t)
       )
     (linear--switch-to-buf)
-    (url-retrieve "https://api.linear.app/graphql" handler '() t)
+    (url-retrieve linear-api-endpoint handler '() t)
     ))
 
 ;; Debugging
