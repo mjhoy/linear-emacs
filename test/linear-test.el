@@ -33,10 +33,8 @@
              (process-live-p linear-test-server-process))
     (kill-process linear-test-server-process))
   
-  ;; Build first (blocking)
   (linear-test--build-server)
   
-  ;; Start pre-built server with correct working directory
   (let ((default-directory (expand-file-name "test-server/" default-directory)))
     (setq linear-test-server-process
           (start-process "linear-mock-server"
@@ -45,11 +43,9 @@
                          "run"
                          "--release")))
   
-  ;; Wait for server to start (much shorter now)
   (message "Starting Linear mock server...")
   (sleep-for 1)
   
-  ;; Verify server is responding
   (let ((attempts 0))
     (while (and (< attempts 10)
                 (condition-case nil
@@ -74,27 +70,21 @@
 
 (defun linear-test--setup ()
   "Set up test environment."
-  ;; Save original configuration
   (setq linear-test-original-api-token linear-api-token)
   (setq linear-test-original-api-endpoint linear-api-endpoint)
   
-  ;; Configure for testing
   (setq linear-api-token "test-token")
   (setq linear-api-endpoint "http://localhost:8080/graphql")
   
-  ;; Start mock server
   (linear-test--start-server))
 
 (defun linear-test--teardown ()
   "Clean up test environment."
-  ;; Stop server
   (linear-test--stop-server)
   
-  ;; Restore original configuration
   (setq linear-api-token linear-test-original-api-token)
   (setq linear-api-endpoint linear-test-original-api-endpoint)
   
-  ;; Clean up test buffers
   (when (get-buffer "*linear*")
     (kill-buffer "*linear*"))
   (dolist (buffer (buffer-list))
@@ -102,24 +92,22 @@
       (kill-buffer buffer))))
 
 
-;; Test fixtures
+;; Tests
+
 (ert-deftest linear-test-retrieve-issues ()
   "Test retrieving assigned issues from mock server."
   (linear-test--setup)
   (unwind-protect
       (progn
-        ;; Call linear-retrieve and wait for response
         (linear-retrieve)
         
         ;; Give time for async request to complete
         (sleep-for 1)
         
-        ;; Check that buffer was created and populated
         (with-current-buffer "*linear*"
           (should (> (buffer-size) 0))
           (goto-char (point-min))
           
-          ;; Should contain our test issues
           (should (search-forward "CHO-26" nil t))
           (should (search-forward "Better style" nil t))
           
@@ -138,21 +126,17 @@
   (unwind-protect
       (progn
         (progn
-          ;; First populate the main buffer
           (linear-retrieve)
           (sleep-for 1)
           
-          ;; Navigate to first issue and show details
           (with-current-buffer "*linear*"
             (goto-char (point-min))
             (search-forward "CHO-26")
             (beginning-of-line)
             
-            ;; Show issue details
             (linear-show-item-details)
             (sleep-for 1)
             
-            ;; Check issue detail buffer was created
             (let ((issue-buffer (get-buffer "*linear-issue-92ddcc64-5765-4a41-980e-49493eb086b3*")))
               (should issue-buffer)
               
@@ -160,13 +144,11 @@
                 (should (> (buffer-size) 0))
                 (goto-char (point-min))
                 
-                ;; Check issue details are displayed
                 (should (search-forward "Issue: CHO-26 Better style" nil t))
                 (should (search-forward "State: Todo 🫡" nil t))
                 (should (search-forward "Assignee: mjh@mjhoy.com" nil t))
                 (should (search-forward "(No description.)" nil t))
                 
-                ;; Check comments are displayed
                 (should (search-forward "Comments:" nil t))
                 (should (search-forward "This is a markdown comment." nil t)))))))
     (linear-test--teardown)))
@@ -186,7 +168,6 @@
             
             (with-current-buffer issue-buffer
               (goto-char (point-min))
-              ;; Should show "(No description.)" instead of failing
               (should (search-forward "(No description.)" nil t))))))
     (linear-test--teardown)))
 
@@ -196,7 +177,6 @@
   (unwind-protect
       (progn
         (progn
-          ;; Get issue with real description (CHO-18)
           (linear-retrieve-issue "adf20c5e-5a52-4906-8706-fdf825c7f891")
           (sleep-for 1)
           
@@ -205,11 +185,9 @@
             
             (with-current-buffer issue-buffer
               (goto-char (point-min))
-              ;; Should show the actual description
               (should (search-forward "A test description." nil t))))))
     (linear-test--teardown)))
 
-;; Utility to run all tests
 (defun linear-run-tests ()
   "Run all Linear tests with proper setup/teardown."
   (interactive)
