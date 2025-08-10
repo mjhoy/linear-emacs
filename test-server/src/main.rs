@@ -1,5 +1,6 @@
 use async_graphql::{
-    http::GraphiQLSource, EmptyMutation, EmptySubscription, Object, Schema, SimpleObject,
+    http::GraphiQLSource, EmptyMutation, EmptySubscription, InputObject, Object, Schema,
+    SimpleObject,
 };
 use async_graphql_axum::GraphQL;
 use axum::{
@@ -65,11 +66,20 @@ struct IssueConnection {
     nodes: Vec<Issue>,
 }
 
-#[derive(SimpleObject)]
-struct Viewer {
-    #[graphql(name = "assignedIssues")]
-    assigned_issues: IssueConnection,
+#[derive(InputObject)]
+struct NullFilter {
+    null: bool,
 }
+
+#[derive(InputObject)]
+struct IssueFilter {
+    #[graphql(name = "completedAt")]
+    completed_at: Option<NullFilter>,
+    #[graphql(name = "canceledAt")]
+    canceled_at: Option<NullFilter>,
+}
+
+struct Viewer;
 
 fn load_issues() -> Vec<Issue> {
     (1..=3)
@@ -89,13 +99,21 @@ fn load_issues() -> Vec<Issue> {
 struct Query;
 
 #[Object]
-impl Query {
-    async fn viewer(&self) -> Viewer {
+impl Viewer {
+    #[graphql(name = "assignedIssues")]
+    async fn assigned_issues(&self, filter: Option<IssueFilter>) -> IssueConnection {
         let issues: Vec<Issue> = load_issues();
 
-        Viewer {
-            assigned_issues: IssueConnection { nodes: issues },
-        }
+        // For simplicity, we ignore the filter and return all issues
+        // In a real implementation, you'd filter based on the criteria
+        IssueConnection { nodes: issues }
+    }
+}
+
+#[Object]
+impl Query {
+    async fn viewer(&self) -> Viewer {
+        Viewer
     }
 
     async fn issue(&self, id: String) -> Option<Issue> {

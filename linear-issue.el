@@ -78,7 +78,7 @@
       (setq buffer-read-only t)
       )
     (linear--switch-to-issue-buf issue-id)
-    (url-retrieve "https://api.linear.app/graphql" handler '() t)
+    (url-retrieve linear-api-endpoint handler '() t)
     ))
 
 (defun linear--switch-to-issue-buf (issue-id)
