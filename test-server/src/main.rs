@@ -101,7 +101,7 @@ struct Query;
 #[Object]
 impl Viewer {
     #[graphql(name = "assignedIssues")]
-    async fn assigned_issues(&self, filter: Option<IssueFilter>) -> IssueConnection {
+    async fn assigned_issues(&self, _filter: Option<IssueFilter>) -> IssueConnection {
         let issues: Vec<Issue> = load_issues();
 
         // For simplicity, we ignore the filter and return all issues
