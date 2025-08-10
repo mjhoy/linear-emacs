@@ -1,0 +1,40 @@
+{
+  "data": {
+    "issue": {
+      "id": "92ddcc64-5765-4a41-980e-49493eb086b3",
+      "identifier": "CHO-26",
+      "title": "Better style",
+      "url": "https://linear.app/chorebot/issue/CHO-26/better-style",
+      "description": null,
+      "state": {
+        "name": "Todo 🫡",
+        "color": "#e2e2e2"
+      },
+      "assignee": {
+        "name": "mjh@mjhoy.com",
+        "email": "mjh@mjhoy.com"
+      },
+      "labels": {
+        "nodes": []
+      },
+      "comments": {
+        "nodes": [
+          {
+            "body": "This is a markdown comment.\n\n* One two three\n* Four five six.",
+            "user": {
+              "name": "mjh@mjhoy.com"
+            },
+            "createdAt": "2025-08-09T15:04:44.672Z"
+          },
+          {
+            "body": "test of a comment",
+            "user": {
+              "name": "mjh@mjhoy.com"
+            },
+            "createdAt": "2025-08-09T15:04:30.881Z"
+          }
+        ]
+      }
+    }
+  }
+}
