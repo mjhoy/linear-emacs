@@ -81,10 +81,9 @@ in your `auth-sources' file."
 
 (defcustom linear-views
   '((:name "My Issues"
-     :key ?i
      :filter (:assignee me)))
   "List of saved Linear views.
-Each element is a plist with keys :name, :key, and :filter.
+Each element is a plist with keys :name and :filter.
 The :filter plist supports :assignee, :states, :team, and :project."
   :type '(repeat plist)
   :group 'linear)

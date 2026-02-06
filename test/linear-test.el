@@ -195,10 +195,8 @@
   (unwind-protect
       (let ((linear-views
              '((:name "My Issues"
-                :key ?i
                 :filter (:assignee me))
                (:name "Team CHO"
-                :key ?t
                 :filter (:assignee me :team "CHO")))))
         (linear-retrieve (car linear-views))
         (sleep-for 1)
@@ -218,7 +216,6 @@
   (linear-test--setup)
   (unwind-protect
       (let ((view '(:name "All by email"
-                    :key ?a
                     :filter (:assignee "mjh@mjhoy.com"))))
         (linear-retrieve view)
         (sleep-for 1)
@@ -232,6 +229,7 @@
           (goto-char (point-min))
           (should (search-forward "CHO-18" nil t))))
     (linear-test--teardown)))
+
 
 (defun linear-run-tests ()
   "Run all Linear tests with proper setup/teardown."
