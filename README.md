@@ -30,9 +30,42 @@ In your emacs init, require `linear`:
 
 ## Usage
 
-`M-x linear` brings up a list of your assigned, in-progress tickets.
+`M-x linear` brings up a list of tickets.
 
-- `RET` on a ticket opens in browser.
-- `C-w` copies the URL to the kill ring.
+| Key   | Action                          |
+|-------|---------------------------------|
+| `RET` | Show issue details              |
+| `o`   | Open issue in browser           |
+| `C-w` | Copy issue URL to kill ring     |
+| `s`   | Switch view                     |
+| `g`   | Refresh                         |
+| `n/p` | Next/previous line              |
+
+### Views
+
+Customize `linear-views` to define named query views. Each view has a `:filter`
+plist supporting `:assignee`, `:states`, `:team`, and `:project`:
+
+```elisp
+(setq linear-views
+      '((:name "My Issues"
+         :filter (:assignee me))
+        (:name "My Todo"
+         :filter (:assignee me :states ("Todo")))
+        (:name "Team CHO"
+         :filter (:team "CHO"))))
+```
+
+Press `s` in the linear buffer to switch between views.
+
+## Development
+
+Requires the rust toolchain installed for the mock linear server.
+
+```
+make test              # all tests
+make test-unit         # unit tests only
+make test-integration  # tests that use the mock server
+```
 
 [linear]: https://linear.app

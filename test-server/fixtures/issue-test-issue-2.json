@@ -10,6 +10,11 @@
         "name": "In Progress",
         "color": "#f2c94c"
       },
+      "team": {
+        "key": "CHO",
+        "name": "Chorebot"
+      },
+      "project": null,
       "assignee": {
         "name": "mjh@mjhoy.com",
         "email": "mjh@mjhoy.com"
