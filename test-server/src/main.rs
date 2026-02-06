@@ -19,9 +19,22 @@ struct Issue {
     url: String,
     description: Option<String>,
     state: State,
+    team: Team,
+    project: Option<Project>,
     assignee: Option<User>,
     labels: LabelConnection,
     comments: CommentConnection,
+}
+
+#[derive(SimpleObject, Deserialize)]
+struct Team {
+    key: String,
+    name: String,
+}
+
+#[derive(SimpleObject, Deserialize)]
+struct Project {
+    name: String,
 }
 
 #[derive(SimpleObject, Deserialize)]
@@ -72,11 +85,42 @@ struct NullFilter {
 }
 
 #[derive(InputObject)]
+struct StringFilter {
+    eq: Option<String>,
+    #[graphql(name = "in")]
+    in_list: Option<Vec<String>>,
+}
+
+#[derive(InputObject)]
+struct StateFilter {
+    name: Option<StringFilter>,
+}
+
+#[derive(InputObject)]
+struct TeamFilter {
+    key: Option<StringFilter>,
+}
+
+#[derive(InputObject)]
+struct ProjectFilter {
+    name: Option<StringFilter>,
+}
+
+#[derive(InputObject)]
+struct AssigneeFilter {
+    email: Option<StringFilter>,
+}
+
+#[derive(InputObject)]
 struct IssueFilter {
     #[graphql(name = "completedAt")]
     completed_at: Option<NullFilter>,
     #[graphql(name = "canceledAt")]
     canceled_at: Option<NullFilter>,
+    state: Option<StateFilter>,
+    team: Option<TeamFilter>,
+    project: Option<ProjectFilter>,
+    assignee: Option<AssigneeFilter>,
 }
 
 struct Viewer;
@@ -114,6 +158,11 @@ impl Viewer {
 impl Query {
     async fn viewer(&self) -> Viewer {
         Viewer
+    }
+
+    async fn issues(&self, _filter: Option<IssueFilter>) -> IssueConnection {
+        let issues: Vec<Issue> = load_issues();
+        IssueConnection { nodes: issues }
     }
 
     async fn issue(&self, id: String) -> Option<Issue> {

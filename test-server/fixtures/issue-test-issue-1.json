@@ -10,6 +10,11 @@
         "name": "Todo 🫡",
         "color": "#e2e2e2"
       },
+      "team": {
+        "key": "CHO",
+        "name": "Chorebot"
+      },
+      "project": null,
       "assignee": {
         "name": "mjh@mjhoy.com",
         "email": "mjh@mjhoy.com"

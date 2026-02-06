@@ -9,33 +9,21 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Install Emacs
       run: |
         sudo apt-get update
         sudo apt-get install -y emacs-nox
         emacs --version
-    
+
     - name: Install Rust
       uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
         toolchain: stable
-    
-    - name: Build mock server
-      run: |
-        cd test-server
-        cargo build --release
-    
-    - name: Run ERT tests
-      run: |
-        emacs -batch \
-          --eval "(add-to-list 'load-path \".\")" \
-          --eval "(setq linear-api-token \"test-token\")" \
-          --eval "(require 'linear)" \
-          --eval "(require 'linear-issue)" \
-          --load "test/linear-test.el" \
-          --eval "(ert-run-tests-batch-and-exit \"linear-test-\")"
+
+    - name: Run tests
+      run: make test
